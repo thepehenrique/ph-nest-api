@@ -56,4 +56,8 @@ export class UsersService {
 
     await this.repository.deleteById(id);
   }
+
+  async findByEmail(email: string): Promise<UserEntity | null> {
+    return this.repository.findByEmail(email);
+  }
 }
