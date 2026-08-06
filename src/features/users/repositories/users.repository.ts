@@ -17,6 +17,7 @@ export class UsersRepository {
   async findById(id: number): Promise<UserEntity | null> {
     return this.repository
       .createQueryBuilder('user')
+      .leftJoinAndSelect('user.role', 'role')
       .where('user.id = :id', { id })
       .getOne();
   }
