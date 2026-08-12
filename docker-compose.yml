@@ -18,3 +18,18 @@ services:
       NODE_ENV: development
 
     command: npm run start:dev
+
+  redis:
+    image: redis:7-alpine
+    container_name: ph-redis
+
+    ports:
+      - "6379:6379"
+
+    volumes:
+      - redis_data:/data
+
+    command: redis-server --appendonly yes
+
+volumes:
+  redis_data:
