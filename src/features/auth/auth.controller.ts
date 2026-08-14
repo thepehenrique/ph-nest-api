@@ -24,6 +24,8 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthenticatedUserDto } from './dto/authenticated-user.dto';
 import type { AuthenticatedRequest } from './dto/authenticated-request.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { RateLimitGuard } from 'src/infrastructure/rate-limit/rate-limit.guard';
+import { RateLimit } from 'src/infrastructure/rate-limit/rate-limit.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -31,6 +33,8 @@ export class AuthController {
   constructor(private readonly service: AuthService) {}
 
   @Post('login')
+  @UseGuards(RateLimitGuard)
+  @RateLimit(5, 60)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
     summary: 'Autenticar usuário',

@@ -4,12 +4,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UsersModule } from './features/users/users.module';
 import { RolesModule } from './features/roles/roles.module';
 import { AuthModule } from './features/auth/auth.module';
+import { CacheModule } from './infrastructure/cache/cache.module';
+import { RateLimitModule } from './infrastructure/rate-limit/rate-limit.module';
 
 @Module({
   imports: [
     UsersModule,
     RolesModule,
     AuthModule,
+    CacheModule,
+    RateLimitModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',

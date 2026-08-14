@@ -32,4 +32,18 @@ export class RedisService implements OnModuleDestroy {
   async onModuleDestroy(): Promise<void> {
     await this.redis.quit();
   }
+
+  async increment(key: string): Promise<number> {
+    return this.redis.incr(key);
+  }
+
+  async incrementWithExpiration(key: string, ttl: number): Promise<number> {
+    const count = await this.redis.incr(key);
+
+    if (count === 1) {
+      await this.redis.expire(key, ttl);
+    }
+
+    return count;
+  }
 }
