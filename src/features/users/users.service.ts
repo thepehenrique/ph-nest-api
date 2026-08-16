@@ -10,12 +10,14 @@ import { UserEntity } from './entities/users.entity';
 import { UsersRepository } from './repositories/users.repository';
 import { RolesService } from '../roles/roles.service';
 import { ROLES } from 'src/common/constants/roles.constants';
+import { EmailQueue } from 'src/infrastructure/queue/email.queue';
 
 @Injectable()
 export class UsersService {
   constructor(
     private readonly repository: UsersRepository,
     private readonly rolesService: RolesService,
+    private readonly emailQueue: EmailQueue,
   ) {}
 
   async create(bodyDto: CreateUserDto): Promise<number> {
@@ -37,6 +39,8 @@ export class UsersService {
     user.role = role;
 
     await this.repository.save(user);
+
+    await this.emailQueue.addWelcomeEmail(user.id, bodyDto.email);
 
     return user.id;
   }

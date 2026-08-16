@@ -6,6 +6,8 @@ import { RolesModule } from './features/roles/roles.module';
 import { AuthModule } from './features/auth/auth.module';
 import { CacheModule } from './infrastructure/cache/cache.module';
 import { RateLimitModule } from './infrastructure/rate-limit/rate-limit.module';
+import { QueueModule } from './infrastructure/queue/queue.module';
+import { EmailModule } from './infrastructure/queue/email/email.module';
 
 @Module({
   imports: [
@@ -14,6 +16,8 @@ import { RateLimitModule } from './infrastructure/rate-limit/rate-limit.module';
     AuthModule,
     CacheModule,
     RateLimitModule,
+    QueueModule,
+    EmailModule,
     ConfigModule.forRoot({
       isGlobal: true,
       envFilePath: '.env',
