@@ -28,6 +28,7 @@ import { Roles } from '../auth/decorators/roles.decorators';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { ROLES } from 'src/common/constants/roles.constants';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -58,6 +59,29 @@ export class UsersController {
   })
   async findById(@Param('id', ParseIntPipe) id: number): Promise<UserEntity> {
     return this.service.findById(id);
+  }
+
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({
+    summary: 'Buscar todos os usuários',
+  })
+  @ApiUnauthorizedResponse({ type: ErrorResponseDto })
+  @ApiBadRequestResponse({ type: ErrorResponseDto })
+  @ApiNotFoundResponse({ type: ErrorResponseDto })
+  @ApiOkResponse({
+    type: UserResponseDto,
+  })
+  async findAll(): Promise<UserResponseDto[]> {
+    const users = await this.service.findAll();
+
+    return users.map((user) => ({
+      id: user.id,
+      name: user.name,
+      email: user.email,
+      isActive: user.isActive,
+    }));
   }
 
   @Delete(':id')

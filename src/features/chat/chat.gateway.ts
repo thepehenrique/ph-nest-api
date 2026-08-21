@@ -54,6 +54,14 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     this.connectedUsers.set(payload.sub, client);
 
+    const onlineUserIds = [...this.connectedUsers.keys()].filter(
+      (userId) => userId !== payload.sub,
+    );
+
+    client.emit('online_users', {
+      userIds: onlineUserIds,
+    });
+
     console.log(`Usuário ${payload.sub} conectado`);
 
     this.server.emit('user_online', {
@@ -73,6 +81,7 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     receiver.emit('new_message', {
       senderId,
+      receiverId: data.receiverId,
       content: data.content,
     });
   }

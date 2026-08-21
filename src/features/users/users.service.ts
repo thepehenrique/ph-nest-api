@@ -11,6 +11,7 @@ import { UsersRepository } from './repositories/users.repository';
 import { RolesService } from '../roles/roles.service';
 import { ROLES } from 'src/common/constants/roles.constants';
 import { EmailQueue } from 'src/infrastructure/queue/email.queue';
+import { UserResponseDto } from './dto/user-response.dto';
 
 @Injectable()
 export class UsersService {
@@ -53,6 +54,10 @@ export class UsersService {
     }
 
     return user;
+  }
+
+  async findAll(): Promise<UserResponseDto[]> {
+    return this.repository.findAll();
   }
 
   async deleteById(id: number): Promise<void> {

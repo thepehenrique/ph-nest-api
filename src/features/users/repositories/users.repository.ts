@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, DeleteResult } from 'typeorm';
 import { UserEntity } from '../entities/users.entity';
+import { UserResponseDto } from '../dto/user-response.dto';
 
 @Injectable()
 export class UsersRepository {
@@ -20,6 +21,13 @@ export class UsersRepository {
       .leftJoinAndSelect('user.role', 'role')
       .where('user.id = :id', { id })
       .getOne();
+  }
+
+  async findAll(): Promise<UserResponseDto[]> {
+    return this.repository
+      .createQueryBuilder('user')
+      .leftJoinAndSelect('user.role', 'role')
+      .getMany();
   }
 
   async findByEmail(email: string): Promise<UserEntity | null> {
