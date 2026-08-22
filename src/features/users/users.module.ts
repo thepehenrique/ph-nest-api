@@ -4,13 +4,14 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserEntity } from './entities/users.entity';
 import { UsersRepository } from './repositories/users.repository';
 import { UsersController } from './users.controller';
-import { UsersService } from './users.service';
 import { RolesModule } from '../roles/roles.module';
+import { UsersService } from './services/users.service';
+import { EmailVerificationService } from 'src/infrastructure/verification/email-verification.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([UserEntity]), RolesModule],
   controllers: [UsersController],
-  providers: [UsersService, UsersRepository],
-  exports: [UsersService, UsersRepository],
+  providers: [UsersService, EmailVerificationService, UsersRepository],
+  exports: [UsersService, UsersRepository, EmailVerificationService],
 })
 export class UsersModule {}

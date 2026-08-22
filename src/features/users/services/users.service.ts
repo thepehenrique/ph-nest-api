@@ -4,14 +4,14 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
-
-import { CreateUserDto } from './dto/create-user.dto';
-import { UserEntity } from './entities/users.entity';
-import { UsersRepository } from './repositories/users.repository';
-import { RolesService } from '../roles/roles.service';
 import { ROLES } from 'src/common/constants/roles.constants';
+import { RolesService } from 'src/features/roles/roles.service';
 import { EmailQueue } from 'src/infrastructure/queue/email.queue';
-import { UserResponseDto } from './dto/user-response.dto';
+import { CreateUserDto } from '../dto/create-user.dto';
+import { UserResponseDto } from '../dto/user-response.dto';
+import { UserEntity } from '../entities/users.entity';
+import { UsersRepository } from '../repositories/users.repository';
+import { EmailVerificationService } from 'src/infrastructure/verification/email-verification.service';
 
 @Injectable()
 export class UsersService {
@@ -19,6 +19,7 @@ export class UsersService {
     private readonly repository: UsersRepository,
     private readonly rolesService: RolesService,
     private readonly emailQueue: EmailQueue,
+    private readonly emailVerificationService: EmailVerificationService,
   ) {}
 
   async create(bodyDto: CreateUserDto): Promise<number> {
@@ -41,9 +42,17 @@ export class UsersService {
 
     await this.repository.save(user);
 
-    await this.emailQueue.addWelcomeEmail(user.id, bodyDto.email);
+    const code = this.emailVerificationService.generateCode();
+
+    await this.emailVerificationService.saveCode(user.id, code);
+
+    await this.emailQueue.addVerificationEmail(user.id, bodyDto.email, code);
 
     return user.id;
+  }
+
+  async update(user: UserEntity): Promise<void> {
+    await this.repository.save(user);
   }
 
   async findById(id: number): Promise<UserEntity> {

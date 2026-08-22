@@ -60,6 +60,14 @@ export class UserEntity {
   })
   isActive: boolean;
 
+  @Column({
+    name: 'is_email_verified',
+    type: 'boolean',
+    default: false,
+    nullable: false,
+  })
+  isEmailVerified: boolean;
+
   @CreateDateColumn({
     name: 'created_at',
     type: 'timestamp with time zone',

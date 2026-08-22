@@ -62,8 +62,8 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
       userIds: onlineUserIds,
     });
 
-    console.log(`Usuário ${payload.sub} conectado`);
-
+    console.log(`Usuário ${payload.sub} conectado - Socket: ${client.id}`);
+    console.log('Usuários online:', [...this.connectedUsers.keys()]);
     this.server.emit('user_online', {
       userId: payload.sub,
     });
@@ -95,8 +95,9 @@ export class ChatGateway implements OnGatewayConnection, OnGatewayDisconnect {
 
     this.connectedUsers.delete(userId);
 
-    console.log(`Usuário ${userId} desconectado`);
-
+    console.log(
+      `Usuário ${client.data.userId} desconectado - Socket: ${client.id}`,
+    );
     this.server.emit('user_offline', {
       userId,
     });

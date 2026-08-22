@@ -11,6 +11,7 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { RolesGuard } from './guards/roles.guard';
 import { RedisModule } from 'src/infrastructure/redis/redis.module';
 import { RefreshTokenService } from './services/refresh-token.service';
+import { PasswordResetService } from './services/password-reset.service';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { RefreshTokenService } from './services/refresh-token.service';
     JwtAuthGuard,
     RolesGuard,
     RefreshTokenService,
+    PasswordResetService,
   ],
   exports: [JwtModule],
 })

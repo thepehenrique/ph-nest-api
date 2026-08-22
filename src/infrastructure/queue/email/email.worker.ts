@@ -3,26 +3,49 @@ import { Job, Worker } from 'bullmq';
 
 import { EmailService } from '../email/email.service';
 
-interface WelcomeEmailJob {
+interface EmailJob {
   userId: number;
   email: string;
+  code?: string;
 }
 
 @Injectable()
 export class EmailWorker implements OnModuleInit, OnModuleDestroy {
-  private worker!: Worker<WelcomeEmailJob>;
+  private worker!: Worker<EmailJob>;
 
   constructor(private readonly emailService: EmailService) {}
 
   onModuleInit(): void {
-    this.worker = new Worker<WelcomeEmailJob>(
+    this.worker = new Worker<EmailJob>(
       'email',
-      async (job: Job<WelcomeEmailJob>) => {
-        if (job.name !== 'send-welcome-email') {
+      async (job: Job<EmailJob>) => {
+        if (job.name === 'send-welcome-email') {
+          await this.emailService.sendWelcomeEmail(job.data.email);
+
           return;
         }
 
-        await this.emailService.sendWelcomeEmail(job.data.email);
+        if (job.name === 'send-verification-email') {
+          if (!job.data.code) {
+            throw new Error('Código de verificação não informado.');
+          }
+
+          await this.emailService.sendVerificationEmail(
+            job.data.email,
+            job.data.code,
+          );
+        }
+
+        if (job.name === 'send-password-reset-email') {
+          if (!job.data.code) {
+            throw new Error('Código de recuperação não informado.');
+          }
+
+          await this.emailService.sendPasswordResetEmail(
+            job.data.email,
+            job.data.code,
+          );
+        }
       },
       {
         connection: {

@@ -26,6 +26,10 @@ import type { AuthenticatedRequest } from './dto/authenticated-request.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RateLimitGuard } from 'src/infrastructure/rate-limit/rate-limit.guard';
 import { RateLimit } from 'src/infrastructure/rate-limit/rate-limit.decorator';
+import { VerifyEmailDto } from '../users/dto/verify-email.dto';
+import { ResendVerificationDto } from '../users/dto/resend-verification.dto';
+import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { ResetPasswordDto } from '../users/dto/reset-password.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -75,6 +79,46 @@ export class AuthController {
   })
   async refresh(@Body() bodyDto: RefreshTokenDto): Promise<LoginResponseDto> {
     return this.service.refresh(bodyDto.refreshToken);
+  }
+
+  @Post('verify-email')
+  @ApiOperation({
+    summary: 'Enviar código para validar o email',
+  })
+  async verifyEmail(@Body() verifyEmailDto: VerifyEmailDto): Promise<void> {
+    await this.service.verifyEmail(verifyEmailDto);
+  }
+
+  @Post('resend-verification')
+  @ApiOperation({
+    summary: 'Reenviar o código de verificação do email',
+  })
+  @RateLimit(1, 60)
+  async resendVerificationEmail(
+    @Body() resendVerificationDto: ResendVerificationDto,
+  ): Promise<void> {
+    await this.service.resendVerificationEmail(resendVerificationDto);
+  }
+
+  @Post('forgot-password')
+  @RateLimit(1, 60)
+  @ApiOperation({
+    summary: 'Enviar o código de alteração de senha.',
+  })
+  async forgotPassword(
+    @Body() forgotPasswordDto: ForgotPasswordDto,
+  ): Promise<void> {
+    await this.service.forgotPassword(forgotPasswordDto);
+  }
+
+  @Post('reset-password')
+  @ApiOperation({
+    summary: 'Alterar senha',
+  })
+  async resetPassword(
+    @Body() resetPasswordDto: ResetPasswordDto,
+  ): Promise<void> {
+    await this.service.resetPassword(resetPasswordDto);
   }
 
   @Post('logout')

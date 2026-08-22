@@ -22,13 +22,13 @@ import {
 
 import { CreateUserDto } from './dto/create-user.dto';
 import { UserEntity } from './entities/users.entity';
-import { UsersService } from './users.service';
 import { ErrorResponseDto } from 'src/common/dto/error-response.dto';
 import { Roles } from '../auth/decorators/roles.decorators';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../auth/guards/roles.guard';
 import { ROLES } from 'src/common/constants/roles.constants';
 import { UserResponseDto } from './dto/user-response.dto';
+import { UsersService } from './services/users.service';
 
 @ApiTags('Users')
 @Controller('users')
