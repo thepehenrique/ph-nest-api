@@ -9,3 +9,5 @@ O **PH Nest API** foi criado com o objetivo de reunir, em um único projeto, as 
 O foco não é apenas implementar funcionalidades, mas entender quando, por que e como utilizar cada tecnologia de forma organizada, seguindo boas práticas de arquitetura e desenvolvimento.
 
 ---
+
+Atualmente ele está sendo usado como o backend da aplicação em electron que esta sendo desenvolvida.
