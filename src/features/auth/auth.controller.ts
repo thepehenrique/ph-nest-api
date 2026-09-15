@@ -27,8 +27,7 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { RateLimitGuard } from 'src/infrastructure/rate-limit/rate-limit.guard';
 import { RateLimit } from 'src/infrastructure/rate-limit/rate-limit.decorator';
 import { VerifyEmailDto } from '../users/dto/verify-email.dto';
-import { ResendVerificationDto } from '../users/dto/resend-verification.dto';
-import { ForgotPasswordDto } from './dto/forgot-password.dto';
+import { VerificationDto } from '../users/dto/resend-verification.dto';
 import { ResetPasswordDto } from '../users/dto/reset-password.dto';
 
 @ApiTags('Auth')
@@ -95,7 +94,7 @@ export class AuthController {
   })
   @RateLimit(1, 60)
   async resendVerificationEmail(
-    @Body() resendVerificationDto: ResendVerificationDto,
+    @Body() resendVerificationDto: VerificationDto,
   ): Promise<void> {
     await this.service.resendVerificationEmail(resendVerificationDto);
   }
@@ -106,7 +105,7 @@ export class AuthController {
     summary: 'Enviar o código de alteração de senha.',
   })
   async forgotPassword(
-    @Body() forgotPasswordDto: ForgotPasswordDto,
+    @Body() forgotPasswordDto: VerificationDto,
   ): Promise<void> {
     await this.service.forgotPassword(forgotPasswordDto);
   }

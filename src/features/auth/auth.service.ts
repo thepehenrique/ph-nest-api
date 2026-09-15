@@ -13,11 +13,11 @@ import { RefreshTokenService } from './services/refresh-token.service';
 import { UsersService } from '../users/services/users.service';
 import { VerifyEmailDto } from '../users/dto/verify-email.dto';
 import { EmailVerificationService } from 'src/infrastructure/verification/email-verification.service';
-import { ResendVerificationDto } from '../users/dto/resend-verification.dto';
 import { EmailQueue } from 'src/infrastructure/queue/email.queue';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { PasswordResetService } from './services/password-reset.service';
 import { ResetPasswordDto } from '../users/dto/reset-password.dto';
+import { VerificationDto } from '../users/dto/resend-verification.dto';
 
 @Injectable()
 export class AuthService {
@@ -138,7 +138,7 @@ export class AuthService {
   }
 
   async resendVerificationEmail(
-    resendVerificationDto: ResendVerificationDto,
+    resendVerificationDto: VerificationDto,
   ): Promise<void> {
     const user = await this.usersService.findByEmail(
       resendVerificationDto.email,
