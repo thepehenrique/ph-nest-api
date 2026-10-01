@@ -1,25 +1,28 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import * as nodemailer from 'nodemailer';
 
 @Injectable()
 export class EmailService {
   private readonly transporter: nodemailer.Transporter;
+  private readonly from: string;
 
-  constructor() {
+  constructor(configService: ConfigService) {
+    this.from = configService.getOrThrow<string>('SMTP_FROM');
     this.transporter = nodemailer.createTransport({
-      host: process.env.SMTP_HOST,
-      port: Number.parseInt(process.env.SMTP_PORT ?? '587', 10),
-      secure: process.env.SMTP_SECURE === 'true',
+      host: configService.getOrThrow<string>('SMTP_HOST'),
+      port: configService.getOrThrow<number>('SMTP_PORT'),
+      secure: configService.getOrThrow<boolean>('SMTP_SECURE'),
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD,
+        user: configService.getOrThrow<string>('SMTP_USER'),
+        pass: configService.getOrThrow<string>('SMTP_PASSWORD'),
       },
     });
   }
 
   async sendWelcomeEmail(email: string): Promise<void> {
     await this.transporter.sendMail({
-      from: process.env.SMTP_FROM,
+      from: this.from,
       to: email,
       subject: 'Bem-vindo!',
       text: 'Seja bem-vindo ao ChatDesktop!',
@@ -35,7 +38,7 @@ export class EmailService {
 
   async sendVerificationEmail(email: string, code: string): Promise<void> {
     await this.transporter.sendMail({
-      from: process.env.SMTP_FROM,
+      from: this.from,
       to: email,
       subject: 'Confirme seu e-mail',
       text: `Seu código de confirmação é: ${code}`,
@@ -57,7 +60,7 @@ export class EmailService {
 
   async sendPasswordResetEmail(email: string, code: string): Promise<void> {
     await this.transporter.sendMail({
-      from: process.env.SMTP_FROM,
+      from: this.from,
       to: email,
       subject: 'Recuperação de senha',
       text: `Seu código para redefinir sua senha é: ${code}`,

@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Queue } from 'bullmq';
 
 @Injectable()
 export class EmailQueue {
   private readonly queue: Queue;
 
-  constructor() {
+  constructor(configService: ConfigService) {
     this.queue = new Queue('email', {
       connection: {
-        host: process.env.REDIS_HOST ?? 'localhost',
-        port: Number.parseInt(process.env.REDIS_PORT ?? '6379', 10),
+        host: configService.getOrThrow<string>('REDIS_HOST'),
+        port: configService.getOrThrow<number>('REDIS_PORT'),
       },
     });
   }

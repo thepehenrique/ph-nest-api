@@ -1,4 +1,5 @@
 import { Injectable, OnModuleDestroy, OnModuleInit } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { Job, Worker } from 'bullmq';
 
 import { EmailService } from '../email/email.service';
@@ -13,7 +14,10 @@ interface EmailJob {
 export class EmailWorker implements OnModuleInit, OnModuleDestroy {
   private worker!: Worker<EmailJob>;
 
-  constructor(private readonly emailService: EmailService) {}
+  constructor(
+    private readonly emailService: EmailService,
+    private readonly configService: ConfigService,
+  ) {}
 
   onModuleInit(): void {
     this.worker = new Worker<EmailJob>(
@@ -49,8 +53,8 @@ export class EmailWorker implements OnModuleInit, OnModuleDestroy {
       },
       {
         connection: {
-          host: process.env.REDIS_HOST ?? 'localhost',
-          port: Number.parseInt(process.env.REDIS_PORT ?? '6379', 10),
+          host: this.configService.getOrThrow<string>('REDIS_HOST'),
+          port: this.configService.getOrThrow<number>('REDIS_PORT'),
         },
       },
     );

@@ -1,11 +1,15 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { createHash, randomBytes } from 'crypto';
 
 import { RedisService } from 'src/infrastructure/redis/redis.service';
 
 @Injectable()
 export class RefreshTokenService {
-  constructor(private readonly redisService: RedisService) {}
+  constructor(
+    private readonly redisService: RedisService,
+    private readonly configService: ConfigService,
+  ) {}
 
   generate(): string {
     return randomBytes(64).toString('hex');
@@ -20,9 +24,8 @@ export class RefreshTokenService {
 
     const key = `refresh-token:${tokenHash}`;
 
-    const ttl = Number.parseInt(
-      process.env.REFRESH_TOKEN_EXPIRES_IN ?? '604800',
-      10,
+    const ttl = this.configService.getOrThrow<number>(
+      'REFRESH_TOKEN_EXPIRES_IN',
     );
 
     await this.redisService.set(key, String(userId), ttl);
