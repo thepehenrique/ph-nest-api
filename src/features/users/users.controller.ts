@@ -21,7 +21,6 @@ import {
 } from '@nestjs/swagger';
 
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserEntity } from './entities/users.entity';
 import { ErrorResponseDto } from 'src/common/dto/error-response.dto';
 import { Roles } from '../auth/decorators/roles.decorators';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -55,10 +54,14 @@ export class UsersController {
   @ApiBadRequestResponse({ type: ErrorResponseDto })
   @ApiNotFoundResponse({ type: ErrorResponseDto })
   @ApiOkResponse({
-    type: UserEntity,
+    type: UserResponseDto,
   })
-  async findById(@Param('id', ParseIntPipe) id: number): Promise<UserEntity> {
-    return this.service.findById(id);
+  async findById(
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<UserResponseDto> {
+    const user = await this.service.findById(id);
+
+    return UserResponseDto.fromEntity(user);
   }
 
   @Get()
@@ -76,12 +79,7 @@ export class UsersController {
   async findAll(): Promise<UserResponseDto[]> {
     const users = await this.service.findAll();
 
-    return users.map((user) => ({
-      id: user.id,
-      name: user.name,
-      email: user.email,
-      isActive: user.isActive,
-    }));
+    return users.map((user) => UserResponseDto.fromEntity(user));
   }
 
   @Delete(':id')

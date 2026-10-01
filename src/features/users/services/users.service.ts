@@ -8,7 +8,6 @@ import { ROLES } from 'src/common/constants/roles.constants';
 import { RolesService } from 'src/features/roles/roles.service';
 import { EmailQueue } from 'src/infrastructure/queue/email.queue';
 import { CreateUserDto } from '../dto/create-user.dto';
-import { UserResponseDto } from '../dto/user-response.dto';
 import { UserEntity } from '../entities/users.entity';
 import { UsersRepository } from '../repositories/users.repository';
 import { EmailVerificationService } from 'src/infrastructure/verification/email-verification.service';
@@ -65,7 +64,7 @@ export class UsersService {
     return user;
   }
 
-  async findAll(): Promise<UserResponseDto[]> {
+  async findAll(): Promise<UserEntity[]> {
     return this.repository.findAll();
   }
 
