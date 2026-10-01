@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { RedisService } from 'src/infrastructure/redis/redis.service';
+import { randomInt } from 'crypto';
+
+import { RedisService } from '../redis/redis.service';
 
 @Injectable()
 export class EmailVerificationService {
@@ -8,7 +10,7 @@ export class EmailVerificationService {
   constructor(private readonly redisService: RedisService) {}
 
   generateCode(): string {
-    return Math.floor(100000 + Math.random() * 900000).toString();
+    return randomInt(100000, 1000000).toString();
   }
 
   async saveCode(userId: number, code: string): Promise<void> {

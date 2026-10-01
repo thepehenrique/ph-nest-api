@@ -24,7 +24,6 @@ import { JwtAuthGuard } from './guards/jwt-auth.guard';
 import { AuthenticatedUserDto } from './dto/authenticated-user.dto';
 import type { AuthenticatedRequest } from './dto/authenticated-request.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { RateLimitGuard } from 'src/infrastructure/rate-limit/rate-limit.guard';
 import { RateLimit } from 'src/infrastructure/rate-limit/rate-limit.decorator';
 import { VerifyEmailDto } from '../users/dto/verify-email.dto';
 import { VerificationDto } from '../users/dto/resend-verification.dto';
@@ -36,7 +35,6 @@ export class AuthController {
   constructor(private readonly service: AuthService) {}
 
   @Post('login')
-  @UseGuards(RateLimitGuard)
   @RateLimit(5, 60)
   @HttpCode(HttpStatus.OK)
   @ApiOperation({
@@ -81,6 +79,7 @@ export class AuthController {
   }
 
   @Post('verify-email')
+  @RateLimit(5, 60)
   @ApiOperation({
     summary: 'Enviar código para validar o email',
   })
@@ -111,6 +110,7 @@ export class AuthController {
   }
 
   @Post('reset-password')
+  @RateLimit(5, 60)
   @ApiOperation({
     summary: 'Alterar senha',
   })

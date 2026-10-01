@@ -1,7 +1,8 @@
 import {
-  BadRequestException,
   CanActivate,
   ExecutionContext,
+  HttpException,
+  HttpStatus,
   Injectable,
 } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
@@ -36,8 +37,9 @@ export class RateLimitGuard implements CanActivate {
     const count = await this.rateLimitService.increment(key, options.ttl);
 
     if (count > options.limit) {
-      throw new BadRequestException(
+      throw new HttpException(
         'Muitas tentativas. Tente novamente mais tarde.',
+        HttpStatus.TOO_MANY_REQUESTS,
       );
     }
 
